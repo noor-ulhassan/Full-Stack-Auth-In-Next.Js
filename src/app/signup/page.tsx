@@ -2,21 +2,51 @@
 import Link from "next/link";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Axios } from "axios";
+import axios from "axios";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [user, setUser] = React.useState({
     email: "",
     password: "",
     username: "",
   });
-  const onSignup = async () => {};
+  const [buttonDisabled, setButtonDisabled] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const onSignup = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/users/signup", user);
+      console.log("Signup Success", response.data);
+      router.push("/login");
+    } catch (error: any) {
+      console.log("Error in signup", error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      user.email.length > 0 &&
+      user.password.length > 0 &&
+      user.username.length > 0
+    ) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [user]);
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] selection:bg-indigo-500/30">
       <div className="w-full max-w-md p-10 bg-[#1e293b]/50 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-extrabold text-white tracking-tight">
-            Join Us
+            {loading ? "Processing..." : "Signup"}
           </h1>
           <p className="mt-2 text-slate-400">Start your journey today.</p>
         </div>
@@ -78,7 +108,7 @@ export default function SignupPage() {
             onClick={onSignup}
             className="w-full py-4 mt-6 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.97] rounded-2xl transition-all duration-200"
           >
-            Create Account
+            {buttonDisabled ? "Fill the form" : "Signup"}
           </button>
         </div>
 
