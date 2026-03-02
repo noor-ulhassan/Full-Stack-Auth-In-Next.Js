@@ -9,6 +9,7 @@ export default function ProfilePage() {
     try {
       await axios.get("/api/users/logout");
       console.log("Logout successful");
+      router.refresh();
       router.push("/login");
     } catch (error: any) {
       console.log(error);
