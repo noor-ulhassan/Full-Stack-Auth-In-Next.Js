@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
         if(!validatePassword){
             return NextResponse.json({error:"Invalid password"},{status:400})
         }
+        
 
         //create token data
 
